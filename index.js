@@ -4,8 +4,12 @@ const app = express();
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const port = process.env.PORT || 5001;
 //middleware
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin:'http://localhost:5173',
+  credentials:true
+}))
 
 //career-magnet
 //w7UXO5ImD9UD2R6L
@@ -30,7 +34,12 @@ async function run() {
 
     //create a collection 01
     const jobCollection = client.db("Career-MagnetDB").collection("allJobs");
-
+    //get the inserted data
+    app.get("/allJobs", async (req, res) => {
+      const cursor = jobCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
