@@ -1,15 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5001;
 //middleware
 // app.use(cors());
 app.use(express.json());
-app.use(cors({
-  origin:'http://localhost:5173',
-  credentials:true
-}))
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //career-magnet
 //w7UXO5ImD9UD2R6L
@@ -40,6 +42,26 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // data get by id
+    app.get("/jobDetails/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobCollection.findOne(query);
+      res.send(result);
+    });
+    //filtering by category
+    //http://localhost:5001/allJobs?category=Remote Job
+    // app.get("/allJobs", async (req, res) => {
+    //   let queryObj = {}
+    //   const category = req.query.category;
+    //   if(category){
+    //     queryObj.category = category;
+    //   }
+    //   console.log(category,queryObj);
+    //   const cursor = jobCollection.find(queryObj);
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
