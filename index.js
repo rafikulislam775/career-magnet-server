@@ -36,6 +36,9 @@ async function run() {
 
     //create a collection 01
     const jobCollection = client.db("Career-MagnetDB").collection("allJobs");
+    const applications = client
+      .db("Career-MagnetDB")
+      .collection("applications");
     //get the inserted data
     app.get("/allJobs", async (req, res) => {
       const cursor = jobCollection.find();
@@ -48,6 +51,13 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await jobCollection.findOne(query);
       res.send(result);
+    });
+    //data inserted by id
+    app.post("/applyJob", async (req, res) => {
+      const application = req.body;
+      const result = await applications.insertOne(application);
+      res.send(result);
+      console.log(result);
     });
     //filtering by category
     //http://localhost:5001/allJobs?category=Remote Job
@@ -75,10 +85,9 @@ async function run() {
 }
 run().catch(console.dir);
 
-
 app.get("/", (req, res) => {
   res.send("server is running");
 });
 app.listen(port, () => {
-  console.log(`car doctor is running on port ${port}`);
+  console.log(`server is running on port ${port}`);
 });
