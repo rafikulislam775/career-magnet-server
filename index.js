@@ -57,21 +57,29 @@ async function run() {
       const application = req.body;
       const result = await applications.insertOne(application);
       res.send(result);
+      // console.log(result);
+    });
+    //Add job by users self
+    app.post("/addJob", async (req, res) => {
+      const allJobs = req.body;
+      const result = await jobCollection.insertOne(allJobs);
+      res.send(result);
       console.log(result);
     });
-    //filtering by category
-    //http://localhost:5001/allJobs?category=Remote Job
-    // app.get("/allJobs", async (req, res) => {
-    //   let queryObj = {}
-    //   const category = req.query.category;
-    //   if(category){
-    //     queryObj.category = category;
-    //   }
-    //   console.log(category,queryObj);
-    //   const cursor = jobCollection.find(queryObj);
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
+    //get application
+    app.get("/applyJob", async (req, res) => {
+      const cursor = applications.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    //remove application jobs
+    app.delete("/applyJob/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await applications.deleteOne(query);
+      res.send(result);
+      console.log(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
