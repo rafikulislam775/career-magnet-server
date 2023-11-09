@@ -52,6 +52,37 @@ async function run() {
       const result = await jobCollection.findOne(query);
       res.send(result);
     });
+
+    //find data for update (01.1)
+    app.get("/updateJob/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobCollection.findOne(query);
+      res.send(result);
+      console.log(result);
+    });
+    //update or edit self posting job; (01.2)  1st you need to find data whice one you want to update
+    app.put("/updateJob/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const option = { upsert: true };
+      const updateJob = req.body;
+      const job = {
+        $set: {
+          img: updateJob.img,
+          name: updateJob.name,
+          title: updateJob.title,
+          category: updateJob.category,
+          postingDate: updateJob.postingDate,
+          applicationDeadline: updateJob.applicationDeadline,
+          salaryRange: updateJob.salaryRange,
+          longDetails: updateJob.longDetails,
+          jobApplicantsNumber: updateJob.jobApplicantsNumber,
+        },
+      };
+      const result = await jobCollection.updateOne(filter, job, option);
+      res.send(result);
+    });
     //data inserted by id
     app.post("/applyJob", async (req, res) => {
       const application = req.body;
@@ -64,7 +95,7 @@ async function run() {
       const allJobs = req.body;
       const result = await jobCollection.insertOne(allJobs);
       res.send(result);
-      console.log(result);
+      // console.log(result);
     });
     //get application
     app.get("/applyJob", async (req, res) => {
