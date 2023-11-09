@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5001;
 //middleware
@@ -8,18 +9,16 @@ const port = process.env.PORT || 5001;
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      // "http://localhost:5173"
+      " https://career-magnet.web.app/",
+      "https://career-magnet.firebaseapp.com/",
+    ],
     credentials: true,
   })
 );
 
-//career-magnet
-//w7UXO5ImD9UD2R6L
-
-//add mongo DB connection
-
-const uri =
-  "mongodb+srv://career-magnet:w7UXO5ImD9UD2R6L@cluster0.hfblnyz.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.hfblnyz.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -32,7 +31,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     //create a collection 01
     const jobCollection = client.db("Career-MagnetDB").collection("allJobs");
@@ -109,11 +108,10 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await applications.deleteOne(query);
       res.send(result);
-      console.log(result);
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
